@@ -1,1 +1,231 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080f1e">
+<title>MONEY MAKER V1</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080f1e;color:#edf4ff;font-family:Arial,sans-serif}
+header{padding:22px 18px;background:#101c30;border-bottom:1px solid #203451}
+header h2{margin:0;color:#45a2ff}
+header small{color:#91a8c5}
+main{padding:17px;max-width:850px;margin:auto;padding-bottom:90px}
+h3{margin-top:25px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#13233a;padding:16px;border:1px solid #243d5d;border-radius:13px}
+.card small{color:#91a8c5}
+.card h2{margin:9px 0 0;font-size:23px}
+.blue{color:#48a5ff}
+.green{color:#40d99a}
+.red{color:#ff737d}
+button,select,input{font:inherit}
+button{border:0;border-radius:9px;padding:13px;background:#167be5;color:white;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.4}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mode{background:#172a43;border:1px solid #2b4565}
+.mode.active{background:#1269c5;border-color:#65baff}
+.panel{background:#13233a;padding:16px;border-radius:13px;margin-top:12px;border:1px solid #243d5d}
+.full{width:100%;margin-top:10px}
+.secondary{background:#253b57}
+.stop{background:#a83242}
+input,select{width:100%;padding:13px;background:#091426;color:white;border:1px solid #304966;border-radius:8px;margin:7px 0 13px}
+label{font-size:13px;color:#a9bed8}
+.note{font-size:12px;color:#91a8c5;line-height:1.6}
+.status{display:inline-block;padding:6px 10px;border-radius:20px;background:#263a52;color:#b9d8ff;font-size:12px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#101c30;border-top:1px solid #263b58;display:flex;justify-content:space-around;padding:12px 3px;z-index:5}
+nav button{background:transparent;padding:8px 5px;font-size:11px;color:#b9cce3}
+section{scroll-margin-top:15px}
+.signal{padding:12px;background:#0c192b;border-radius:9px;margin-top:9px}
+</style>
+</head>
+<body>
+
+<header>
+<h2>⚡ MONEY MAKER V1</h2>
+<small>Smart Trading Platform</small>
+</header>
+
+<main>
+<section id="home">
+<h3>Trading Dashboard</h3>
+<span class="status" id="botStatus">BOT STOPPED</span>
+<div class="cards" style="margin-top:13px">
+<div class="card"><small>Profit / Loss</small><h2 id="profit">R0.00</h2></div>
+<div class="card"><small>Balance</small><h2>R0.00</h2></div>
+<div class="card"><small>Equity</small><h2>R0.00</h2></div>
+<div class="card"><small>Margin</small><h2>R0.00</h2></div>
+</div>
+<p class="note">Demo dashboard. No live broker account is connected. Values are not real account data.</p>
+</section>
+
+<section id="bot">
+<h3>Choose Trading Mode</h3>
+<div class="modes">
+<button class="mode active" onclick="chooseMode(this,'Scalping')">Scalping</button>
+<button class="mode" onclick="chooseMode(this,'Day Trading')">Day Trade</button>
+<button class="mode" onclick="chooseMode(this,'Swing Trading')">Swing</button>
+</div>
+<div class="panel">
+<p>Selected strategy: <b id="mode">Scalping</b></p>
+<button class="full" onclick="startBot()">▶ START BOT</button>
+<button class="full secondary" onclick="pauseBot()">Ⅱ PAUSE BOT</button>
+<button class="full stop" onclick="stopBot()">■ STOP BOT</button>
+<p class="note" id="botMessage">Bot is stopped. Start to enter simulation mode.</p>
+</div>
+</section>
+
+<section id="scanner">
+<h3>Market Scanner</h3>
+<div class="panel">
+<label>Choose instrument</label>
+<select id="symbol">
+<option>XAUUSD</option><option>EURUSD</option>
+<option>GBPUSD</option><option>USDJPY</option>
+<option>US30</option><option>NAS100</option>
+<option>BTCUSD</option>
+</select>
+<p class="note">Live prices require a verified market-data provider. No live price is currently available.</p>
+<button class="full secondary" onclick="alert('Market data provider not connected yet.')">CHECK DATA CONNECTION</button>
+</div>
+</section>
+
+<section id="signals">
+<h3>AI Signal Centre</h3>
+<div class="panel">
+<span class="status">WAITING FOR VERIFIED DATA</span>
+<div class="signal">
+<b>BUY / SELL / WAIT</b>
+<p class="note">Signals will only be generated after a real market-data feed and analysis engine are configured.</p>
+</div>
+</div>
+</section>
+
+<section id="events">
+<h3>Economic Events Scanner</h3>
+<div class="panel">
+<span class="status">EVENT FEED NOT CONNECTED</span>
+<p>Monitor major economic releases:</p>
+<ul class="note">
+<li>Non-Farm Payrolls (NFP)</li>
+<li>Consumer Price Index (CPI)</li>
+<li>Producer Price Index (PPI)</li>
+<li>Federal Reserve / FOMC</li>
+<li>GDP and unemployment claims</li>
+<li>Retail sales and interest rates</li>
+</ul>
+<p class="note">Currencies: USD, EUR, GBP, JPY, AUD, CAD, CHF and NZD.</p>
+<p class="note">BUY / SELL / WAIT analysis requires verified event results and actual market reaction. Event calendar is not connected yet.</p>
+</div>
+</section>
+
+<section id="risk">
+<h3>Risk Manager</h3>
+<div class="panel">
+<label>Simulated account balance (ZAR)</label>
+<input type="number" id="balance" value="1000" min="0">
+<label>Risk per trade (%)</label>
+<input type="number" id="risk" value="0.5" min="0.1" max="2" step="0.1">
+<label>Stop loss distance (points)</label>
+<input type="number" id="sl" value="100" min="1">
+<button class="full" onclick="calculateRisk()">CALCULATE RISK</button>
+<div class="signal" id="riskResult">Enter your settings to calculate theoretical risk.</div>
+<p class="note">This is an educational calculation, not a broker lot-size instruction. Accurate MT5 sizing also needs contract specifications and tick values.</p>
+</div>
+</section>
+
+<section id="history">
+<h3>Trade History</h3>
+<div class="panel">
+<p id="historyText">No simulated trades yet.</p>
+<p class="note">No real trades have been placed.</p>
+</div>
+</section>
+
+<section id="mt5">
+<h3>MT5 Connection</h3>
+<div class="panel">
+<label>Broker server</label>
+<input id="server" placeholder="Example: Exness MT5 server">
+<span class="status">NOT CONNECTED</span>
+<button class="full secondary" onclick="alert('Secure MT5 integration is not configured. Do not enter your MT5 password here.')">LINK MT5</button>
+<p class="note">Secure MT5 authentication and a compatible execution service are required. This website does not collect or store your trading password. MT5 Android cannot run Expert Advisors.</p>
+</div>
+</section>
+
+<section id="settings">
+<h3>Settings</h3>
+<div class="panel">
+<p>Strategy: <b id="settingsMode">Scalping</b></p>
+<p>Execution: <b>Disabled</b></p>
+<p>Environment: <b>Simulation</b></p>
+<p class="note">Live order execution is not enabled.</p>
+</div>
+</section>
+</main>
+
+<nav>
+<button onclick="go('home')">⌂<br>Home</button>
+<button onclick="go('bot')">⚡<br>Bot</button>
+<button onclick="go('scanner')">⌕<br>Scanner</button>
+<button onclick="go('events')">◷<br>Events</button>
+<button onclick="go('mt5')">↔<br>MT5</button>
+</nav>
+
+<script>
+let selectedMode='Scalping';
+let botRunning=false;
+let botPaused=false;
+
+function go(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function chooseMode(btn,name){
+document.querySelectorAll('.mode').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+selectedMode=name;
+document.getElementById('mode').textContent=name;
+document.getElementById('settingsMode').textContent=name;
+}
+
+function startBot(){
+botRunning=true;
+botPaused=false;
+document.getElementById('botStatus').textContent='SIMULATION RUNNING';
+document.getElementById('botMessage').textContent=selectedMode+' simulation started. No live trades are being placed.';
+}
+
+function pauseBot(){
+if(!botRunning){alert('Start the simulation first.');return;}
+botPaused=true;
+document.getElementById('botStatus').textContent='SIMULATION PAUSED';
+document.getElementById('botMessage').textContent='Simulation paused.';
+}
+
+function stopBot(){
+botRunning=false;
+botPaused=false;
+document.getElementById('botStatus').textContent='BOT STOPPED';
+document.getElementById('botMessage').textContent='Simulation stopped.';
+}
+
+function calculateRisk(){
+let balance=Number(document.getElementById('balance').value);
+let risk=Number(document.getElementById('risk').value);
+let sl=Number(document.getElementById('sl').value);
+if(balance<=0||risk<=0||risk>2||sl<=0){
+document.getElementById('riskResult').textContent='Please enter valid settings. Risk must be above 0 and no more than 2%.';
+return;
+}
+let amount=balance*risk/100;
+document.getElementById('riskResult').textContent=
+'Maximum theoretical loss: R'+amount.toFixed(2)+
+' | Stop distance: '+sl+' points.';
+}
+</script>
+</body>
+  </html>
+  
